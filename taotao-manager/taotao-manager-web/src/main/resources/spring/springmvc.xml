@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 扫描类 -->
+	<context:component-scan base-package="com.taotao.controller" />
+	
+	<!-- 开启注解 -->
+	<mvc:annotation-driven />
+	
+	<!-- 视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 资源映射(深坑1静态资源访问问题) 
+		静态资源最好不要放在 WEB-INF文件夹下，可能会造成客户端无法访问的问题
+		
+		解决方法1：
+			在webapp文件夹下加入resources文件夹,将静态资源放入其中
+			在SpringMVC的配置文件中设置静态文件映射
+			<mvc:resources location="/resources/css/" mapping="/css/**"/>
+			<mvc:resources location="/resources/js/" mapping="/js/**"/>
+	-->
+	<mvc:resources location="/resources/css/" mapping="/css/**"/>
+	<mvc:resources location="/resources/js/" mapping="/js/**"/>
+	
+	<!-- 定义文件上传解析器 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设定默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <!-- 设定文件上传的最大值5MB，5*1024*1024 -->
+        <property name="maxUploadSize" value="5242880"></property>
+    </bean>
+	
+</beans>
