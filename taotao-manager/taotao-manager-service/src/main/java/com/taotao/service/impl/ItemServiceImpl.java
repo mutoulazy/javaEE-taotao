@@ -3,6 +3,8 @@ package com.taotao.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.taotao.mapper.TbItemDescMapper;
+import com.taotao.pojo.TbItemDesc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Autowired
 	private TbItemMapper itemMapper;
+
+	@Autowired
+	private TbItemDescMapper tbItemDescMapper;
 	
 	@Override
 	public TbItem getItemById(long itemId) {
@@ -66,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
 	 * 添加商品信息
 	 */
 	@Override
-	public TaotaoResult createItem(TbItem item) {
+	public TaotaoResult createItem(TbItem item , String itemDesc) throws Exception{
 		// 补全Item中的信息
 		//生成商品Id
 		long itemId = IDUtils.genItemId();
@@ -81,9 +86,25 @@ public class ItemServiceImpl implements ItemService {
 		int result = itemMapper.insert(item);
 		System.out.println("insert result " + result);
 		if (result <= 0){
-			return TaotaoResult.build(400, "insert error");
+			throw new Exception("插入商品信息异常");
+		}
+		//添加商品描述
+		TaotaoResult insertDescResult =  insertItemDesc(itemId,itemDesc);
+		if (insertDescResult.getStatus() != 200){
+			throw new Exception("插入商品描述异常");
 		}
 		//返回返回值
+		return TaotaoResult.ok();
+	}
+
+	private TaotaoResult insertItemDesc(long itemId, String itemDesc){
+		TbItemDesc tbItemDesc = new TbItemDesc();
+		tbItemDesc.setItemId(itemId);
+		tbItemDesc.setItemDesc(itemDesc);
+		tbItemDesc.setCreated(new Date());
+		tbItemDesc.setUpdated(new Date());
+
+		tbItemDescMapper.insert(tbItemDesc);
 		return TaotaoResult.ok();
 	}
 

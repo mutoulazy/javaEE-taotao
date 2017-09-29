@@ -14,6 +14,6 @@ public interface ItemService {
 	//获取商品表的分页信息
 	EUDataGridResult getItemList(int page, int rows);
 	
-	//添加商品信息
-	TaotaoResult createItem(TbItem item);
+	//添加商品信息 以及商品描述信息
+	TaotaoResult createItem(TbItem item, String itemDesc) throws Exception;
 }
