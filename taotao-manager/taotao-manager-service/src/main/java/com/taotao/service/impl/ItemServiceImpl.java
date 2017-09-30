@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.taotao.mapper.TbItemDescMapper;
+import com.taotao.mapper.TbItemParamItemMapper;
 import com.taotao.pojo.TbItemDesc;
+import com.taotao.pojo.TbItemParamItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Autowired
 	private TbItemDescMapper tbItemDescMapper;
+
+	@Autowired
+	private TbItemParamItemMapper tbItemParamItemMapper;
 	
 	@Override
 	public TbItem getItemById(long itemId) {
@@ -71,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
 	 * 添加商品信息
 	 */
 	@Override
-	public TaotaoResult createItem(TbItem item , String itemDesc) throws Exception{
+	public TaotaoResult createItem(TbItem item , String itemDesc, String itemParam) throws Exception{
 		// 补全Item中的信息
 		//生成商品Id
 		long itemId = IDUtils.genItemId();
@@ -93,10 +98,21 @@ public class ItemServiceImpl implements ItemService {
 		if (insertDescResult.getStatus() != 200){
 			throw new Exception("插入商品描述异常");
 		}
+		//添加商品规格参数
+		TaotaoResult insertParamResult = insertItemParamItem(itemId, itemParam);
+		if (insertParamResult.getStatus() != 200){
+			throw new Exception();
+		}
 		//返回返回值
 		return TaotaoResult.ok();
 	}
 
+	/**
+	 * 添加商品描述信息
+	 * @param itemId
+	 * @param itemDesc
+	 * @return
+	 */
 	private TaotaoResult insertItemDesc(long itemId, String itemDesc){
 		TbItemDesc tbItemDesc = new TbItemDesc();
 		tbItemDesc.setItemId(itemId);
@@ -108,5 +124,56 @@ public class ItemServiceImpl implements ItemService {
 		return TaotaoResult.ok();
 	}
 
+	/**
+	 * 添加商品规格信息
+	 * @param itemId
+	 * @param itemParam
+	 * @return
+	 */
+	public TaotaoResult insertItemParamItem(long itemId, String itemParam) {
+		//构建TbItemParmItem类型
+		TbItemParamItem tbItemParamItem = new TbItemParamItem();
+		tbItemParamItem.setItemId(itemId);
+		tbItemParamItem.setParamData(itemParam);
+		tbItemParamItem.setCreated(new Date());
+		tbItemParamItem.setUpdated(new Date());
+		//插入数据
+		tbItemParamItemMapper.insert(tbItemParamItem);
+
+		return TaotaoResult.ok();
+	}
+
+	/**
+	 * 根据id获取商品信息，并且返回到商品修改页面
+	 * @param itemId
+	 * @return
+	 */
+	@Override
+	public List<TbItem> toItemEditPage(long itemId) {
+		//添加查询条件
+		TbItemExample example = new TbItemExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIdEqualTo(itemId);
+		List<TbItem> list = itemMapper.selectByExample(example);
+		if (list != null && list.size() > 0) {
+			return list;
+		}
+		return null;
+	}
+
+	/**
+	 * 修改商品信息
+	 * @param item
+	 * @return
+	 */
+	@Override
+	public TaotaoResult updateItem(TbItem item) {
+		int result = itemMapper.updateByPrimaryKey(item);
+		if (result<1){
+			System.out.println("update 执行失败");
+			return null;
+		}
+		return TaotaoResult.ok();
+	}
 }
 

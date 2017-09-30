@@ -15,5 +15,11 @@ public interface ItemService {
 	EUDataGridResult getItemList(int page, int rows);
 	
 	//添加商品信息 以及商品描述信息
-	TaotaoResult createItem(TbItem item, String itemDesc) throws Exception;
+	TaotaoResult createItem(TbItem item, String itemDesc, String itemParam) throws Exception;
+
+	//加载商品修改页面
+	List<TbItem> toItemEditPage(long itemId);
+
+	//进行商品信息修改
+	TaotaoResult updateItem(TbItem item);
 }

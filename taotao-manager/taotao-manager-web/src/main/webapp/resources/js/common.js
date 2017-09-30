@@ -188,7 +188,8 @@ var TT = TAOTAO = {
     closeCurrentWindow : function(){
     	$(".panel-tool-close").click();
     },
-    
+
+	/*初始化规格参数模板，读取模板，生成表单*/
     changeItemParam : function(node,formId){
     	$.getJSON("/item/param/query/itemcatid/" + node.id,function(data){
 			  if(data.status == 200 && data.data){

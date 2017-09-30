@@ -35,9 +35,10 @@
 		</ul>
 	</li>
 </div>
-<script style="text/javascript">
+<script>
 	$(function(){
 		TAOTAO.initItemCat({
+			/*判断该商品类别的商品规格是否已经存在，存在则无法添加*/
 			fun:function(node){
 			$(".addGroupTr").hide().find(".param").remove();
 				//  判断选择的目录是否已经添加过规格
@@ -71,7 +72,8 @@
 		$("#itemParamAddTable .close").click(function(){
 			$(".panel-tool-close").click();
 		});
-		
+
+		/*拼接表单中的数据形成json保存到paramData中*/
 		$("#itemParamAddTable .submit").click(function(){
 			var params = [];
 			var groups = $("#itemParamAddTable [name=group]");
