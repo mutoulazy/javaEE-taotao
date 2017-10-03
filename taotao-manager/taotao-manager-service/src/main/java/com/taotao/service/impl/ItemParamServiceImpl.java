@@ -53,7 +53,7 @@ public class ItemParamServiceImpl implements ItemParamService{
         TbItemParamExample.Criteria criteria = example.createCriteria();
         criteria.andItemCatIdEqualTo(itemCatId);
         List<TbItemParam> list = tbItemParamMapper.selectByExampleWithBLOBs(example);
-        if (list.size() >0 || list != null){
+        if (list.size() >0 && list != null){
             return TaotaoResult.ok(list.get(0));
         }
         return TaotaoResult.ok();

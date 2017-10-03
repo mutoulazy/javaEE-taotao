@@ -26,12 +26,12 @@ public class ItemController {
 	@Autowired
 	private ItemService itemService;
 	
-/*	@RequestMapping("/item/{itemId}")
+	@RequestMapping("/item/{itemId}")
 	@ResponseBody
 	public TbItem getItemById(@PathVariable Long itemId) {
 		TbItem tbItem = itemService.getItemById(itemId);
 		return tbItem;
-	}*/
+	}
 	
 	@RequestMapping("/item/list")
 	@ResponseBody
