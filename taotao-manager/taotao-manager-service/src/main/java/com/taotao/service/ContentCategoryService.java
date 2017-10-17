@@ -32,4 +32,11 @@ public interface ContentCategoryService {
      * @return
      */
     TaotaoResult updateContentCategory(long id, String name);
+
+    /**
+     * 内容分类删除
+     * @param id
+     * @return
+     */
+    TaotaoResult deleteContentCategory(long id);
 }
