@@ -1,12 +1,16 @@
 package com.taotao.rest.service.impl;
 
+import com.taotao.common.utils.JsonUtils;
 import com.taotao.mapper.TbItemCatMapper;
 import com.taotao.pojo.TbItemCat;
 import com.taotao.pojo.TbItemCatExample;
+import com.taotao.rest.dao.JedisClient;
 import com.taotao.rest.pojo.CatNode;
 import com.taotao.rest.pojo.CatResult;
 import com.taotao.rest.service.ItemCatService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +23,10 @@ import java.util.List;
 public class ItemCatServiceImpl implements ItemCatService{
     @Autowired
     private TbItemCatMapper itemCatMapper;
-
+    @Autowired
+    private JedisClient jedisClient;
+    @Value("${ITEM_CAT_REDIS_KEY}")
+    private String ITEM_CAT_REDIS_KEY;
 
     @Override
     public CatResult getItemCatList() {
@@ -38,6 +45,9 @@ public class ItemCatServiceImpl implements ItemCatService{
      * @return
      */
     private List<?> getCatList(long parentId) {
+        //从缓存中取内容
+
+
         //创建查询条件
         TbItemCatExample example = new TbItemCatExample();
         TbItemCatExample.Criteria criteria = example.createCriteria();
@@ -72,6 +82,16 @@ public class ItemCatServiceImpl implements ItemCatService{
                 resultList.add("/products/"+tbItemCat.getId()+".html|" + tbItemCat.getName());
             }
         }
+
+        //保存查询结果进入缓存
+        try{
+            // 把返回的结果list转换为字符串
+            String cacheString = JsonUtils.objectToJson(resultList);
+            jedisClient.set(ITEM_CAT_REDIS_KEY,cacheString);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return resultList;
     }
 
